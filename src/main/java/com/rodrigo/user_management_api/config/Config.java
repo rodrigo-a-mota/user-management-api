@@ -1,4 +1,4 @@
-package com.rodrigo.user_management_api;
+package com.rodrigo.user_management_api.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

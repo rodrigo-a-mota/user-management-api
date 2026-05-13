@@ -1,5 +1,8 @@
 package com.rodrigo.user_management_api.controller;
 
+import com.rodrigo.user_management_api.dto.UserRequestDTO;
+import com.rodrigo.user_management_api.dto.UserResponseDTO;
+import com.rodrigo.user_management_api.mapper.UserMapper;
 import com.rodrigo.user_management_api.model.User;
 import com.rodrigo.user_management_api.service.UserService;
 import jakarta.validation.Valid;
@@ -19,24 +22,31 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User savedUser = userService.createUser(user);
-        return ResponseEntity.ok(savedUser);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequest) {
+        User savedUser = userService.createUser(UserMapper.toEntity(userRequest));
+        return ResponseEntity.ok(UserMapper.toDTO(savedUser));
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> users = userService.getAllUsers()
+                .stream()
+                .map(UserMapper::toDTO)
+                .toList();
+
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(UserMapper.toDTO(userService.getUserById(id)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDTO userRequest) {
+        User updatedUser = userService.updateUser(id, UserMapper.toEntity(userRequest));
+
+        return ResponseEntity.ok(UserMapper.toDTO(updatedUser));
     }
 
     @DeleteMapping("/{id}")
